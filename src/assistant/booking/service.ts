@@ -63,7 +63,9 @@ export class BookingService {
       if (options.date < today || options.date > this.lastBookableDate()) {
         return [];
       }
-      return slotsForDate(options.date, this.practice).filter(isOpen).slice(0, limit);
+      // A named day returns every open time, so an afternoon request is never hidden by a cut-off.
+      const open = slotsForDate(options.date, this.practice).filter(isOpen);
+      return options.limit === undefined ? open : open.slice(0, limit);
     }
 
     const found: string[] = [];
